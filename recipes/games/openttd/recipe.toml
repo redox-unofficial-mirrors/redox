@@ -26,7 +26,7 @@ rsync -av --delete "${COOKBOOK_SOURCE}/" ./
 ./configure \\
     --build="$(gcc -dumpmachine)" \\
     --host="${TARGET}" \\
-    --prefix="" \\
+    --prefix="/usr" \\
     --disable-static \\
     --without-liblzo2 \\
     --disable-network \\
