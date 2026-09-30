@@ -1,0 +1,22 @@
+#TODO compile and test
+[source]
+git = "https://github.com/janet-lang/janet"
+rev = "v1.42.1"
+shallow_clone = true
+[build]
+template = "custom"
+mesonflags = [
+
+]
+script = """
+DYNAMIC_INIT
+COOKBOOK_MESON_FLAGS+=(
+    -Dassembler=false
+    -Dnet=false
+    -Dipv6=false
+    -Dkqueue=false
+)
+cookbook_meson
+mkdir -pv "${COOKBOOK_STAGE}/usr/share/janet"
+cp -rv "${COOKBOOK_SOURCE}"/examples/* "${COOKBOOK_STAGE}/usr/share/janet"
+"""

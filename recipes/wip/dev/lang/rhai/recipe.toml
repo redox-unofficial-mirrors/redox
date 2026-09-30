@@ -1,0 +1,13 @@
+#TODO compile and test
+[source]
+git = "https://github.com/rhaiscript/rhai"
+shallow_clone = true
+[build]
+template = "custom"
+script = """
+DYNAMIC_INIT
+cookbook_cargo
+cookbook_cargo_examples hello
+mkdir -pv "${COOKBOOK_STAGE}/usr/share/rhai"
+cp -rv "${COOKBOOK_SOURCE}"/scripts/* "${COOKBOOK_STAGE}/usr/share/rhai"
+"""

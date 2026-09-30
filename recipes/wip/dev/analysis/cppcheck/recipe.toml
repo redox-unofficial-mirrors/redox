@@ -1,0 +1,11 @@
+#TODO compile and test
+[source]
+git = "https://github.com/cppcheck-opensource/cppcheck"
+rev = "2.22.0"
+shallow_clone = true
+[build]
+template = "cmake"
+cmakeflags = [
+    "-DREGISTER_TESTS=OFF",
+    "-DREGISTER_GUI_TESTS=OFF",
+]
