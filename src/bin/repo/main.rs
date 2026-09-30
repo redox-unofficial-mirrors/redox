@@ -668,21 +668,19 @@ fn parse_args(args: Vec<String>) -> Result<(CliConfig, CliCommand, Vec<CookRecip
         let mut binary_recipe_names: Vec<PackageName> = Vec::new();
         let mut ignore_recipe_names: Vec<PackageName> = Vec::new();
         for recipe_name in recipe_names.iter() {
-            if source_names.contains(recipe_name) {
+            if special_rules
+                .get(recipe_name)
+                .is_some_and(|s| s == "ignore")
+            {
+                ignore_recipe_names.push(recipe_name.clone());
+            } else if source_names.contains(recipe_name) {
                 source_recipe_names.push(recipe_name.clone());
             } else if binary_names.contains(recipe_name) {
                 binary_recipe_names.push(recipe_name.clone());
+            } else if repo_binary {
+                binary_recipe_names.push(recipe_name.clone());
             } else {
-                if special_rules
-                    .get(recipe_name)
-                    .is_some_and(|s| s == "ignore")
-                {
-                    ignore_recipe_names.push(recipe_name.clone());
-                } else if repo_binary {
-                    binary_recipe_names.push(recipe_name.clone());
-                } else {
-                    source_recipe_names.push(recipe_name.clone());
-                }
+                source_recipe_names.push(recipe_name.clone());
             }
         }
 
@@ -700,19 +698,20 @@ fn parse_args(args: Vec<String>) -> Result<(CliConfig, CliCommand, Vec<CookRecip
             // Pushing do not need dev deps, so does binary recipes at building
             let include_dev = command.is_building();
             if include_dev && default_rule == "source" {
-                // let's cover a very specific case, binary -> source -> binary -> dev
-                // in this case, we need to move that "source" to "binary", because
-                // that would include dev from its binary child, which is unnecessary
+                // try to lookup if this recipe eventually changed to "binary" so that dev recipes
+                // don't really get included. TODO: move this logic down after special rules applied.
                 let mut i = 0;
+                let (_, repository) = fetch_repo::get_binary_repo();
                 while i < source_recipe_names.len() {
                     let name = &source_recipe_names[i];
-                    match special_rules.get(name) {
-                        Some(s) if s.as_str() == "source" && binary_names.contains(name) => {
-                            let bin = source_recipe_names.remove(i);
-                            binary_recipe_names.push(bin);
-                            continue;
-                        }
-                        _ => {}
+                    if (binary_names.contains(name)
+                        || special_rules
+                            .get(name)
+                            .is_some_and(|s| s.as_str() == "binary"))
+                        && repository.packages.contains_key(name.as_str())
+                    {
+                        binary_recipe_names.push(source_recipe_names.remove(i));
+                        continue;
                     }
                     i += 1;
                 }
