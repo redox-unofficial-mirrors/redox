@@ -10,9 +10,7 @@ if [ ! -f "$COMPILED_SCHEMA" ]; then
     exit 1
 fi
 
-# TODO: why?
-export GTK_DEBUG=interactive
-# TODO: plugin scanner parsing failure
-export GST_REGISTRY_DISABLE=yes
+# If webkit stuck launching, uncomment
+# export GTK_DEBUG=interactive
 
 exec /usr/libexec/webkit2gtk-4.1/MiniBrowser
