@@ -37,7 +37,7 @@ make VERBOSE=1 -j"$(nproc)"
 dest="${COOKBOOK_STAGE}"
 bundledir="$dest/bundle"
 
-make VERBOSE=1 ROOT_DIR="./" BUNDLE_DIR="$bundledir" INSTALL_DIR="$dest/usr" install
+make VERBOSE=1 ROOT_DIR="./" BUNDLE_DIR="$bundledir" INSTALL_DIR="$dest" install
 rm -rf "$bundledir"
 
 if [ -d "${COOKBOOK_STAGE}/usr/bin" ]
