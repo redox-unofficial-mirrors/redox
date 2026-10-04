@@ -85,6 +85,7 @@ else ifeq ($(ARCH),aarch64)
 					$(wildcard $(QEMU_BASE_DIR)/share/qemu/edk2-aarch64-code.fd) \
 					$(wildcard /opt/homebrew/opt/qemu/share/qemu/edk2-aarch64-code.fd) \
 				)
+				PFLASH0_NEEDED=yes
 			endif
 		else
 			FIRMWARE=$(BUILD)/qemu_uboot.rom
@@ -120,6 +121,7 @@ else ifeq ($(ARCH),riscv64gc)
 		$(wildcard $(QEMU_BASE_DIR)/share/qemu/edk2-riscv-code.fd) \
 		$(wildcard /opt/homebrew/opt/qemu/share/qemu/edk2-riscv-code.fd) \
 	)
+	PFLASH0_NEEDED=yes
 	PFLASH1=$(firstword \
 		$(wildcard /usr/share/qemu-efi-riscv64/RISCV_VIRT_VARS.fd) \
 		$(wildcard /usr/share/edk2/riscv/RISCV_VIRT_VARS.fd) \
@@ -128,6 +130,7 @@ else ifeq ($(ARCH),riscv64gc)
 		$(wildcard $(QEMU_BASE_DIR)/share/qemu/edk2-riscv-vars.fd) \
 		$(wildcard /opt/homebrew/opt/qemu/share/qemu/edk2-riscv-vars.fd) \
 	)
+	PFLASH1_NEEDED=yes
 	ifneq ($(usb),no)
 		QEMUFLAGS+=-device qemu-xhci -device usb-kbd -device usb-tablet
 	endif
@@ -366,6 +369,10 @@ $(BUILD)/fw_vars.bin: $(PFLASH1)
 	cp "$<" "$@"
 	chmod +w "$@"
 endif
+
+qemu-deps:
+	$(if $(PFLASH0_NEEDED),$(if $(PFLASH0),,$(error UEFI firmware needed but not found)),)
+	$(if $(PFLASH1_NEEDED),$(if $(PFLASH1),,$(error UEFI variables needed but not found)),)
 
 $(EXTRA_DISK):
 	truncate -s 1g $@
