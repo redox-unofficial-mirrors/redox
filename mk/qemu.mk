@@ -358,6 +358,7 @@ qemu-deps: $(BUILD)/fw_vars.bin
 .PRECIOUS: $(BUILD)/fw_vars.bin
 $(BUILD)/fw_vars.bin: $(PFLASH1)
 	cp "$<" "$@"
+	chmod +w "$@"
 endif
 
 $(EXTRA_DISK):
