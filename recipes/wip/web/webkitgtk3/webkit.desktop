@@ -2,7 +2,7 @@
 Name=WebKit
 Comment=WebKit GTK Browser
 Exec=webkit
-Icon=/usr/share/ui/icons/apps/internet-web-browser.png
+Icon=/usr/share/icons/apps/internet-web-browser.png
 Terminal=false
 Type=Application
 StartupNotify=true
