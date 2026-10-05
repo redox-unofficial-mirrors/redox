@@ -5,6 +5,7 @@ QEMUFLAGS?=-d guest_errors -name "Redox OS $(ARCH)"
 netboot?=no
 redoxer?=no
 VGA_SUPPORTED=no
+# for qemu-relative firmware search
 QEMU_PATH?=$(shell command -v $(QEMU))
 QEMU_BASE_DIR?=$(shell if [ $(QEMU_PATH) ]; then realpath $$(dirname $(QEMU_PATH))/..; fi)
 
@@ -41,9 +42,7 @@ else ifeq ($(ARCH),x86_64)
 		ifeq ($(FIRMWARE),)
 			PFLASH0=$(firstword \
 				$(wildcard /usr/share/qemu/edk2-x86_64-code.fd) \
-				$(wildcard /run/libvirt/nix-ovmf/edk2-x86_64-code.fd) \
 				$(wildcard $(QEMU_BASE_DIR)/share/qemu/edk2-x86_64-code.fd) \
-				$(wildcard /opt/homebrew/opt/qemu/share/qemu/edk2s-x86_64-code.fd) \
 			)
 		endif
 	endif
@@ -81,9 +80,7 @@ else ifeq ($(ARCH),aarch64)
 			ifeq ($(FIRMWARE),)
 				PFLASH0=$(firstword \
 					$(wildcard /usr/share/qemu/edk2-aarch64-code.fd) \
-					$(wildcard /run/libvirt/nix-ovmf/edk2-aarch64-code.fd) \
 					$(wildcard $(QEMU_BASE_DIR)/share/qemu/edk2-aarch64-code.fd) \
-					$(wildcard /opt/homebrew/opt/qemu/share/qemu/edk2-aarch64-code.fd) \
 				)
 				PFLASH0_NEEDED=yes
 			endif
@@ -117,18 +114,14 @@ else ifeq ($(ARCH),riscv64gc)
 		$(wildcard /usr/share/qemu-efi-riscv64/RISCV_VIRT_CODE.fd) \
 		$(wildcard /usr/share/edk2/riscv/RISCV_VIRT_CODE.fd) \
 		$(wildcard /usr/share/qemu/edk2-riscv-code.fd) \
-		$(wildcard /run/libvirt/nix-ovmf/edk2-riscv-code.fd) \
 		$(wildcard $(QEMU_BASE_DIR)/share/qemu/edk2-riscv-code.fd) \
-		$(wildcard /opt/homebrew/opt/qemu/share/qemu/edk2-riscv-code.fd) \
 	)
 	PFLASH0_NEEDED=yes
 	PFLASH1=$(firstword \
 		$(wildcard /usr/share/qemu-efi-riscv64/RISCV_VIRT_VARS.fd) \
 		$(wildcard /usr/share/edk2/riscv/RISCV_VIRT_VARS.fd) \
 		$(wildcard /usr/share/qemu/edk2-riscv-vars.fd) \
-		$(wildcard /run/libvirt/nix-ovmf/edk2-riscv-vars.fd) \
 		$(wildcard $(QEMU_BASE_DIR)/share/qemu/edk2-riscv-vars.fd) \
-		$(wildcard /opt/homebrew/opt/qemu/share/qemu/edk2-riscv-vars.fd) \
 	)
 	PFLASH1_NEEDED=yes
 	ifneq ($(usb),no)
