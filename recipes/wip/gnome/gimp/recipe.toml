@@ -1,4 +1,4 @@
-#TODO compiled but not tested
+#TODO test more
 # build instructions: https://developer.gimp.org/core/setup/build/3.0/INSTALL
 # all build options: https://gitlab.gnome.org/GNOME/gimp/-/blob/master/meson_options.txt?ref_type=heads
 [source]
