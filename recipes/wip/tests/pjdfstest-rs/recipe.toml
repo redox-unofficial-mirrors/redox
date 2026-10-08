@@ -1,4 +1,4 @@
-#TODO not compiled or tested
+#TODO port exacl crate
 [source]
 git = "https://github.com/saidsay-so/pjdfstest"
 shallow_clone = true
