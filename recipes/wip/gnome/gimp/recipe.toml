@@ -1,36 +1,40 @@
-#TODO not compiled or tested
-#TODO discover minimum dependencies from meson log
+#TODO compiled but not tested
 # build instructions: https://developer.gimp.org/core/setup/build/3.0/INSTALL
 # all build options: https://gitlab.gnome.org/GNOME/gimp/-/blob/master/meson_options.txt?ref_type=heads
 [source]
 tar = "https://download.gimp.org/gimp/v3.2/gimp-3.2.4.tar.xz"
 [build]
-template = "meson"
-mesonflags = [
-    "-Dcheck-update=no",
-    "-Dlibbacktrace=false",
-    "-Dlibunwind=false",
-    "-Dprint=false",
+template = "custom"
+script = """
+DYNAMIC_INIT
+rsync -a -v ${COOKBOOK_SYSROOT}/usr/share/pkgconfig/*.pc ${COOKBOOK_SYSROOT}/lib/pkgconfig/
+COOKBOOK_MESON_FLAGS+=(
+    -Denable-default-bin=enabled
+    -Denable-console-bin=true
+    -Dcheck-update=no
+    -Dlibbacktrace=false
+    -Dlibunwind=false
+    -Dprint=false
+    -Dshmem-type=posix
+)
+cookbook_meson
+"""
+dependencies = [
+    "appstream",
+    "atk",
+    "babl",
+    "gtk3",
+    "gegl",
+    "gexiv2",
+    "libarchive",
+    "liblcms",
+    "libmypaint",
+    "librsvg",
+    "mypaint-brushes",
+    "libpoppler",
+    "poppler-data",
+    "shared-mime-info",
 ]
-# dependencies = [
-#     "gtk3",
-#     "gobject-introspection",
-#     "glib",
-#     "cairo",
-#     "pango",
-#     "liblcms",
-#     "libmypaint",
-#     "gexiv2",
-#     "gegl",
-#     "babl",
-#     "librsvg",
-#     "libtiff",
-#     "libjpeg",
-#     "libpng",
-#     "fontconfig",
-#     "freetype2",
-#     "atk",
-#     "harfbuzz",
-#     "bzip2",
-#     "zlib",
-# ]
+dev-dependencies = [
+    "host:libxml2"
+]
