@@ -7,8 +7,8 @@ shallow_clone = true
 template = "custom"
 dependencies = ["ncursesw"]
 script = """
+rsync -av --delete "${COOKBOOK_SOURCE}/rain.c" ./
 mkdir -pv "${COOKBOOK_STAGE}/usr/bin"
 DYNAMIC_INIT
 "${COOKBOOK_CC}" rain.c -o "${COOKBOOK_STAGE}"/usr/bin/rain -lncurses
-cp -rv "${COOKBOOK_SOURCE}"/* "${COOKBOOK_STAGE}/usr/bin"
 """
