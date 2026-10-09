@@ -215,6 +215,56 @@ impl BuildRecipe {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum RecipeRule {
+    Source,
+    Binary,
+    Local,
+    Ignore,
+}
+
+impl RecipeRule {
+    pub fn inverted_default(self) -> Self {
+        if self == RecipeRule::Binary {
+            RecipeRule::Source
+        } else {
+            RecipeRule::Binary
+        }
+    }
+    pub fn from_repo_binary(repo_binary: bool) -> Self {
+        if repo_binary {
+            RecipeRule::Binary
+        } else {
+            RecipeRule::Source
+        }
+    }
+}
+
+impl<'a> TryFrom<&'a str> for RecipeRule {
+    type Error = &'a str;
+
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+        Ok(match value {
+            "source" => Self::Source,
+            "binary" => Self::Binary,
+            "local" => Self::Local,
+            "ignore" => Self::Ignore,
+            v => return Err(v),
+        })
+    }
+}
+
+impl From<RecipeRule> for &'static str {
+    fn from(value: RecipeRule) -> Self {
+        match value {
+            RecipeRule::Source => "source",
+            RecipeRule::Binary => "binary",
+            RecipeRule::Local => "local",
+            RecipeRule::Ignore => "ignore",
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct CookRecipe {
     pub name: PackageName,
@@ -223,6 +273,7 @@ pub struct CookRecipe {
     pub target: &'static str,
     /// If false, it's listed on install config
     pub is_deps: bool,
+    // TODO: change to Option<RecipeRule>
     pub rule: String,
     /// whether if this recipe is pinned from cookbook.lock
     pub pinned: bool,
@@ -642,7 +693,7 @@ pub fn validate_filesystem_rules(recipes: &[CookRecipe]) -> crate::Result<()> {
     let ignored: BTreeSet<String> = recipes
         .iter()
         .filter(|r| r.rule == "ignore")
-        .map(|r| r.canon_recipe_name().without_prefix().to_string())
+        .map(|r| r.name.without_prefix().to_string())
         .collect();
     if ignored.is_empty() {
         return Ok(());
@@ -651,9 +702,10 @@ pub fn validate_filesystem_rules(recipes: &[CookRecipe]) -> crate::Result<()> {
         if recipe.rule == "ignore" {
             continue;
         }
-        if recipe.recipe.build.kind == BuildKind::None
-            || recipe.recipe.build.kind == BuildKind::Remote
-        {
+        if matches!(
+            recipe.recipe.build.kind,
+            BuildKind::None | BuildKind::Remote
+        ) {
             // Not built from source, so build dependencies are irrelevant.
             continue;
         }
