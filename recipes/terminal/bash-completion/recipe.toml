@@ -11,5 +11,5 @@ configureflags = [
 
 [package]
 dependencies = [
-    "sed",
+    "uutils-sed",
 ]
