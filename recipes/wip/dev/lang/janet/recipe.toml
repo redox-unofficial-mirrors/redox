@@ -11,7 +11,7 @@ mesonflags = [
 script = """
 DYNAMIC_INIT
 COOKBOOK_MESON_FLAGS+=(
-    -Dassembler=false
+    #-Dassembler=false # needed by bytecode compiler?
     -Dnet=false
     -Dipv6=false
     -Dkqueue=false
