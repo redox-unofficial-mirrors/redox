@@ -1,4 +1,4 @@
-#TODO users crate error
+#TODO liberrno linking error: undefined reference to `errno_location'
 [source]
 git = "https://github.com/igor-petruk/scriptisto"
 shallow_clone = true
