@@ -1,4 +1,4 @@
-#TODO not compiled or tested
+#TODO implicit declaration of function 'sched_get_priority_min' [-Werror=implicit-function-declaration]
 # build instructions: https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux
 [source]
 git = "https://github.com/raysan5/raylib"

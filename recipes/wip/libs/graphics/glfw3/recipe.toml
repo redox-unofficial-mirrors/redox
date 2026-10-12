@@ -1,4 +1,4 @@
-#TODO not compiled or tested
+#TODO compiled but untested
 # build instructions: https://www.glfw.org/docs/latest/compile.html
 [source]
 git = "https://github.com/glfw/glfw"
@@ -13,4 +13,9 @@ cmakeflags = [
 ]
 dependencies = [
     "libxkbcommon",
+    "libx11",
+    "libxrandr",
+    "libxinerama",
+    "libxcursor",
+    "libxi",
 ]

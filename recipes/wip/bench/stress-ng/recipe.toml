@@ -1,4 +1,4 @@
-#TODO build and test
+#TODO '_SC_MAPPED_FILES' undeclared
 #TODO determine minimum dependencies
 [source]
 git = "https://github.com/ColinIanKing/stress-ng"
