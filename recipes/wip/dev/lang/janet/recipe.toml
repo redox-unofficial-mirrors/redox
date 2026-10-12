@@ -1,4 +1,4 @@
-#TODO compile and test
+#TODO compiled but untested
 [source]
 git = "https://github.com/janet-lang/janet"
 rev = "v1.42.1"
